@@ -4,6 +4,7 @@ export default function Button({children, onReset}) {
     return <ButtonStyle  onClick={onReset}>{children}</ButtonStyle>
 }
 
+
 const ButtonStyle = styled.button `
     padding: .8rem 5rem;
     background-color: hotpink;
