@@ -1,23 +1,22 @@
-import Button from "./components/Button";
-import Player from "./components/Player";
-import PlayerForm from "./components/PlayerForm";
+
+import PlayPage from "./pages/PlayPage"
+import  HomePage  from "./pages/HomePage";
+import Navigation from "./components/Navigation";
 import { useEffect, useState } from "react";
 import { setToLocal, getFromLocal } from "./lib/libStorage";
+import {Routes, Route, useNavigate} from "react-router-dom";
 import styled from "styled-components";
 
 function App() {
-  /*const [players, setPlayers] = useState([
-    { name: "Anna", id: nanoid(), score: 0} ,
-    { name: "Tim", id: nanoid(), score: 0 },
-    { name: "Lisa", id: nanoid(), score: 0},
-  ]); */
 
   const [players, setPlayers] = useState(getFromLocal("players") ?? []);
+  const navigate = useNavigate();
 
   useEffect(() => setToLocal("players", players), [players]);
 
   function handleAdd(newPlayer) {
     setPlayers([...players, newPlayer]);
+    navigate("/play");
   }
 
   function increaseScore(index) {
@@ -27,6 +26,7 @@ function App() {
       { ...currentlyPlayer, score: currentlyPlayer.score + 1 },
       ...players.slice(index + 1),
     ]);
+    console.log("hello")
   }
 
   function decreaseScore(index) {
@@ -50,26 +50,20 @@ function App() {
     setPlayers([]);
   }
 
+
+
   return (
     <AppContainer>
-      {/*eslint-disable */}
-      <ul role="list">
-        {players.map((player, index) => (
-          <Player
-            key={player.id}
-            name={player.name}
-            img={player.img}
-            score={player.score}
-            onIncrease={() => increaseScore(index)}
-            onDecrease={() => decreaseScore(index)}
-          />
-        ))}
-      </ul>
-      <BottonContainer>
-        <Button onReset={resetScores}>Reset scores</Button>
-        <Button onReset={resetAll}>New game</Button>
-      </BottonContainer>
-      <PlayerForm handleSubmit={handleAdd} />
+      
+      <Routes>
+        
+        <Route path="/" element={<HomePage onHandleAdd={handleAdd} />} />
+        <Route path="/play" element={<PlayPage players={players} onIncreaseScore={increaseScore} onDecreaseScore={decreaseScore}  onResetScores={resetScores} onResetAll={resetAll} />} />
+
+      </Routes>
+      <Navigation />
+     
+    
     </AppContainer>
   );
 }
@@ -77,19 +71,11 @@ function App() {
 export default App;
 
 const AppContainer = styled.div`
-  display: flex;
-  flex-flow: column wrap;
-  width: 30%;
+ 
+  width: 50vw;
   height: 100%;
   margin: auto;
-  background-color: #836d6d;
+  background: var(--primary);
   padding: 3rem;
 `;
 
-const BottonContainer = styled.div`
- display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  gap: 10px;
-  margin: 1rem;
-`;
